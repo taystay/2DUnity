@@ -42,6 +42,8 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.vsconfig
+*.zip
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -58,3 +60,12 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+#folders
+Scenes/
+Library/
+Logs/
+UserSettings/
+ProjectSettings/Packages/
+obj/
+Temp/
+voxel-pack/
