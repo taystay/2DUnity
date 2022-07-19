@@ -13,6 +13,7 @@ public class TerrainGeneration : MonoBehaviour
     public Sprite leaf;
 
     [Header("Generation Settings")]
+    public int chunkSize = 20;
     public int worldSize = 100;
     public int dirtLayerHeight = 5;
     public bool generateCave = true;
@@ -31,12 +32,25 @@ public class TerrainGeneration : MonoBehaviour
     public float seed;
     public Texture2D noiseTexture;
 
+    private GameObject[] worldChunks;
     private List<Vector2> worldTiles = new List<Vector2>();
 
     private void Start() {
         seed = Random.Range(-10000, 10000);
         GenerateNoiseTexture();
+        CreateChunks();
         GenerateTerrain();
+    }
+
+    public void CreateChunks() {
+        int numChunks = worldSize / chunkSize;
+        worldChunks = new GameObject[numChunks];
+        for (int i = 0; i < numChunks; i++) {
+            GameObject newChunk = new GameObject();
+            newChunk.name = "Chunk " + i.ToString();
+            newChunk.transform.parent = transform;
+            worldChunks[i] = newChunk;
+        }
     }
 
     public void GenerateTerrain() {
@@ -84,7 +98,7 @@ public class TerrainGeneration : MonoBehaviour
         noiseTexture.Apply();
     }
 
-    public void GenerateTree(float x, float y) {
+    public void GenerateTree(int x, int y) {
         int treeH = Random.Range(minTreeHeight, maxTreeHeight);
         for (int h = 0; h < treeH; h++) {
             if(h == 0) {
@@ -105,9 +119,13 @@ public class TerrainGeneration : MonoBehaviour
         }
     }
 
-    public void PlaceTile(Sprite tileSprite, float x, float y) {
+    public void PlaceTile(Sprite tileSprite, int x, int y) {
         GameObject newTile = new GameObject();
-        newTile.transform.parent = transform;
+
+        float chunkCoord = (Mathf.Round(x / chunkSize) * chunkSize) / chunkSize;
+        chunkCoord /= chunkSize;
+        newTile.transform.parent = worldChunks[(int)chunkCoord].transform;
+
         newTile.AddComponent<SpriteRenderer>();
         newTile.GetComponent<SpriteRenderer>().sprite = tileSprite;
         newTile.name = tileSprite.name;
