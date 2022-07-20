@@ -7,6 +7,7 @@ public class TileAtlas : ScriptableObject
 {
     public TileClass dirt;
     public TileClass grass;
+    public TileClass tallGrass;
     public TileClass stone;
     public TileClass log;
     public TileClass logBase;

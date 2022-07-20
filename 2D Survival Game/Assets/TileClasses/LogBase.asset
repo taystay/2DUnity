@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: LogBase
   m_EditorClassIdentifier: 
   tileName: logBase
-  tileSprite: {fileID: 21300000, guid: 80d48f550fb3b1842b331ac1172c94b0, type: 3}
+  tileSprites:
+  - {fileID: 21300000, guid: 80d48f550fb3b1842b331ac1172c94b0, type: 3}

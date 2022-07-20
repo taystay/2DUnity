@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dirt: {fileID: 11400000, guid: 452859e76ed009541828fa3c911d8d57, type: 2}
   grass: {fileID: 11400000, guid: e881dfdb0dfd1744f809acaab77166f2, type: 2}
+  tallGrass: {fileID: 11400000, guid: f8ac2542319d4c94aaf9b6581fddc9d3, type: 2}
   stone: {fileID: 11400000, guid: f97234632706dc9429c98446ca1eaf93, type: 2}
   log: {fileID: 11400000, guid: 8590aa235228cb04da27c42cc89497a5, type: 2}
   logBase: {fileID: 11400000, guid: f4b610158047b2f4aafa9966b363a930, type: 2}
