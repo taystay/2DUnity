@@ -6,6 +6,7 @@ using UnityEngine;
 public class BiomeClass
 {
     public string name;
+    public TileAtlas tileAtlas;
     public Color biomeColor;
 
     [Header("Noise Settings")]
