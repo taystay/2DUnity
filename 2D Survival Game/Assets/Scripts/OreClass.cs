@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class OreClass
-{
+public class OreClass {
     public string name;
     [Range(0, 1)]
     public float rarity;

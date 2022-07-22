@@ -29,5 +29,5 @@ public class BiomeClass
     public int tallGrassChance = 10;
 
     [Header("Ore Settings")]
-    public OreClass[] ores;
+    public OreClass[] ores = new OreClass[4];
 }
