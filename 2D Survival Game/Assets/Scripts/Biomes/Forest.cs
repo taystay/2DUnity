@@ -19,5 +19,7 @@ public class Forest : BiomeClass
         tallGrassChance = 8;
 
         ores = new OreClass[4];
+        oresRarity[0] = 0.2f;
+        oresSize[0] = 0.8f;
     }
 }

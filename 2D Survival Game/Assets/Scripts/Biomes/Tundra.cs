@@ -19,5 +19,7 @@ public class Tundra : BiomeClass
         tallGrassChance = 0;
 
         ores = new OreClass[4];
+        oresRarity[3] = 0.15f;
+        oresSize[3] = 0.85f;
     }
 }

@@ -30,4 +30,6 @@ public class BiomeClass
 
     [Header("Ore Settings")]
     public OreClass[] ores = new OreClass[4];
+    public float[] oresRarity = { -1, -1, -1, -1 };
+    public float[] oresSize = { -1, -1, -1, -1 };
 }

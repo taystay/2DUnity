@@ -19,5 +19,7 @@ public class Desert : BiomeClass
         tallGrassChance = 0;
 
         ores = new OreClass[4];
+        oresRarity[2] = 0.1f;
+        oresSize[2] = 0.7f;
     }
 }

@@ -9,4 +9,11 @@ public class Coal : OreClass {
         size = 0.7f;
         maxSpawnHeight = 5;
     }
+
+    public Coal(float bRarity, float bSize) {
+        name = "coal";
+        rarity = bRarity;
+        size = bSize;
+        maxSpawnHeight = 5;
+    }
 }

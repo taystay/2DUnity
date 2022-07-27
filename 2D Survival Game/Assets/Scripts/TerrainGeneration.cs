@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class TerrainGeneration : MonoBehaviour
 {
+    private enum ORES {
+        COAL = 0,
+        IRON = 1,
+        GOLD = 2,
+        DIAMOND = 3
+    };
+
     [Header("Tile Atlas")]
     public TileAtlas tileAtlas;
     public float seed;
@@ -46,10 +53,25 @@ public class TerrainGeneration : MonoBehaviour
         biomes[2] = new Tundra();
         biomes[3] = new Desert();*/
         for (int i = 0; i < biomes.Length; i++) {
-            biomes[i].ores[0] = new Coal();
-            biomes[i].ores[1] = new Iron();
-            biomes[i].ores[2] = new Gold();
-            biomes[i].ores[3] = new Diamond();
+            if(biomes[i].oresRarity[(int)ORES.COAL] != -1) 
+                biomes[i].ores[(int)ORES.COAL] = new Coal(biomes[i].oresRarity[(int)ORES.COAL], biomes[i].oresSize[(int)ORES.COAL]);
+            else
+                biomes[i].ores[(int)ORES.COAL] = new Coal();
+
+            if (biomes[i].oresRarity[(int)ORES.IRON] != -1)
+                biomes[i].ores[(int)ORES.IRON] = new Iron(biomes[i].oresRarity[(int)ORES.IRON], biomes[i].oresSize[(int)ORES.IRON]);
+            else
+                biomes[i].ores[(int)ORES.IRON] = new Iron();
+
+            if (biomes[i].oresRarity[(int)ORES.GOLD] != -1)
+                biomes[i].ores[(int)ORES.GOLD] = new Gold(biomes[i].oresRarity[(int)ORES.GOLD], biomes[i].oresSize[(int)ORES.GOLD]);
+            else
+                biomes[i].ores[(int)ORES.GOLD] = new Gold();
+
+            if (biomes[i].oresRarity[(int)ORES.DIAMOND] != -1)
+                biomes[i].ores[(int)ORES.DIAMOND] = new Diamond(biomes[i].oresRarity[(int)ORES.DIAMOND], biomes[i].oresSize[(int)ORES.DIAMOND]);
+            else
+                biomes[i].ores[(int)ORES.DIAMOND] = new Diamond();
         }
     }
 
@@ -65,9 +87,9 @@ public class TerrainGeneration : MonoBehaviour
         biomeColorKey[3].color = biomes[3].biomeColor;
 
         //Gradient color time keys
-        biomeColorKey[0].time = 0.25f;
-        biomeColorKey[1].time = 0.50f;
-        biomeColorKey[2].time = 0.75f;
+        biomeColorKey[0].time = 0.3f;
+        biomeColorKey[1].time = 0.6f;
+        biomeColorKey[2].time = 0.8f;
         biomeColorKey[3].time = 1.0f;
 
         //Gradient alpha keys
@@ -80,38 +102,6 @@ public class TerrainGeneration : MonoBehaviour
         biomeAlphaKey[1].time = 1.0f;
 
         biomeGradient.SetKeys(biomeColorKey, biomeAlphaKey);
-    }
-
-    public int GetCurrTileBiome(int x, int y) {
-        int biome = -1;
-
-        //Debug.Log("biome map: " + biomeMap.GetPixel(x, y).r + " " + biomeMap.GetPixel(x, y).g + " " + biomeMap.GetPixel(x, y).b);
-
-        if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[0].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[0].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[0].biomeColor.b) < 0.1f)) {
-            biome = 0;
-        } else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[1].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[1].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[1].biomeColor.b) < 0.1f)) {
-            biome = 1;
-        } else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[2].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[2].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[2].biomeColor.b) < 0.1f)) {
-            biome = 2;
-        } else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[3].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[3].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[3].biomeColor.b) < 0.1f)) {
-            biome = 3;
-        }
-
-        return biome;
-    }
-
-    public void GetTileBiome() {
-        biomeList = new int[worldSize, worldSize];
-        /*Debug.Log("biome grass: " + biomes[0].biomeColor.r + " " + biomes[0].biomeColor.g + " " + biomes[0].biomeColor.b);
-        Debug.Log("biome forest: " + biomes[1].biomeColor.r + " " + biomes[1].biomeColor.g + " " + biomes[1].biomeColor.b);
-        Debug.Log("biome tundra: " + biomes[2].biomeColor.g + " " + biomes[2].biomeColor.g + " " + biomes[2].biomeColor.b);
-        Debug.Log("biome desert: " + biomes[3].biomeColor.r + " " + biomes[3].biomeColor.g + " " + biomes[3].biomeColor.b);*/
-        for (int x = 0; x < worldSize; x++) {
-            for (int y = 0; y < worldSize; y++) {
-                biomeList[x, y] = GetCurrTileBiome(x, y);
-                //Debug.Log(x + " " + y + " " + biomeList[x, y]);
-            }
-        }
     }
 
     public void DrawTextures() {
@@ -135,18 +125,71 @@ public class TerrainGeneration : MonoBehaviour
     }
 
     public void DrawBiomeTexture() {
+        float v;
+        Color col;
         for (int x = 0; x < biomeMap.width; x++) {
             for (int y = 0; y < biomeMap.height; y++) {
                 //X and Y
-                //float v = Mathf.PerlinNoise((x + seed) * biomeFreq, (y + seed) * biomeFreq);
+                v = Mathf.PerlinNoise((x + seed) * biomeFreq, (y + seed) * biomeFreq);
                 //Just X
-                float v = Mathf.PerlinNoise((x + seed) * biomeFreq, (x + seed) * biomeFreq);
-                Color col = biomeGradient.Evaluate(v);
+                //float v = Mathf.PerlinNoise((x + seed) * biomeFreq, (x + seed) * biomeFreq);
+                col = biomeGradient.Evaluate(v);
                 biomeMap.SetPixel(x, y, col);
             }
         }
 
-        biomeMap.Apply();
+        biomeMap.Apply(); 
+    }
+
+    public void GenerateNoiseTexture(float frequency, float limit, Texture2D noiseTexture) {
+        float v;
+        for (int x = 0; x < noiseTexture.width; x++) {
+            for (int y = 0; y < noiseTexture.height; y++) {
+                v = Mathf.PerlinNoise((x + seed) * frequency, (y + seed) * frequency);
+
+                if (v > limit)
+                    noiseTexture.SetPixel(x, y, Color.white);
+                else
+                    noiseTexture.SetPixel(x, y, Color.black);
+            }
+        }
+
+        noiseTexture.Apply();
+    }
+
+    public void GetTileBiome() {
+        biomeList = new int[worldSize, worldSize];
+        /*Debug.Log("biome grass: " + biomes[0].biomeColor.r + " " + biomes[0].biomeColor.g + " " + biomes[0].biomeColor.b);
+        Debug.Log("biome forest: " + biomes[1].biomeColor.r + " " + biomes[1].biomeColor.g + " " + biomes[1].biomeColor.b);
+        Debug.Log("biome tundra: " + biomes[2].biomeColor.g + " " + biomes[2].biomeColor.g + " " + biomes[2].biomeColor.b);
+        Debug.Log("biome desert: " + biomes[3].biomeColor.r + " " + biomes[3].biomeColor.g + " " + biomes[3].biomeColor.b);*/
+        for (int x = 0; x < worldSize; x++) {
+            for (int y = 0; y < worldSize; y++) {
+                biomeList[x, y] = GetCurrTileBiome(x, y);
+                //Debug.Log(x + " " + y + " " + biomeList[x, y]);
+            }
+        }
+    }
+
+    public int GetCurrTileBiome(int x, int y) {
+        int biome = -1;
+
+        //Debug.Log("biome map: " + biomeMap.GetPixel(x, y).r + " " + biomeMap.GetPixel(x, y).g + " " + biomeMap.GetPixel(x, y).b);
+
+        if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[0].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[0].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[0].biomeColor.b) < 0.1f)) {
+            biome = 0;
+        }
+        else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[1].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[1].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[1].biomeColor.b) < 0.1f)) {
+            biome = 1;
+        }
+        else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[2].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[2].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[2].biomeColor.b) < 0.1f)) {
+            biome = 2;
+        }
+        else if ((Mathf.Abs(biomeMap.GetPixel(x, y).r - biomes[3].biomeColor.r) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).g - biomes[3].biomeColor.g) < 0.1f) && (Mathf.Abs(biomeMap.GetPixel(x, y).b - biomes[3].biomeColor.b) < 0.1f)) {
+            biome = 3;
+        }
+
+        return biome;
     }
 
     public void CreateChunks() {
@@ -160,16 +203,18 @@ public class TerrainGeneration : MonoBehaviour
             worldChunks[i] = newChunk;
         }
     }
-    
+
     public void GenerateTerrain() {
         Sprite[] tileSprite;
+        int curBiome;
+        float height;
         for (int x = 0; x < worldSize; x++) {
-            int curBiome = biomeList[x, 0];
-            float height = Mathf.PerlinNoise((x + seed) * biomes[curBiome].terrFreq, seed * biomes[curBiome].terrFreq) * biomes[curBiome].heightMultiplier + heightAddition;
+            curBiome = biomeList[x, 0];
+            height = Mathf.PerlinNoise((x + seed) * biomes[curBiome].terrFreq, seed * biomes[curBiome].terrFreq) * biomes[curBiome].heightMultiplier + heightAddition;
             for (int y = 0; y < height; y++) {
                 curBiome = biomeList[x, y];
                 if (y < height - biomes[curBiome].dirtLayerHeight) {
-                    if(curBiome == -1) {
+                    if (curBiome == -1) {
                         tileSprite = tileAtlas.stone.tileSprites;
                     } else {
                         tileSprite = biomes[curBiome].tileAtlas.stone.tileSprites;
@@ -183,14 +228,16 @@ public class TerrainGeneration : MonoBehaviour
                         tileSprite = tileAtlas.gold.tileSprites;
                     if (biomes[curBiome].ores[3].spreadTexture.GetPixel(x, y).r > 0.5f && height - y > biomes[curBiome].ores[3].maxSpawnHeight)
                         tileSprite = tileAtlas.diamond.tileSprites;
-                } else if (y < height - 1) {
+                }
+                else if (y < height - 1) {
                     if (curBiome == -1) {
                         tileSprite = tileAtlas.dirt.tileSprites;
                     }
                     else {
                         tileSprite = biomes[curBiome].tileAtlas.dirt.tileSprites;
                     }
-                } else {
+                }
+                else {
                     if (curBiome == -1) {
                         tileSprite = tileAtlas.grass.tileSprites;
                     }
@@ -199,60 +246,58 @@ public class TerrainGeneration : MonoBehaviour
                     }
                 }
 
-                if(biomes[curBiome].generateCave) {
+                if (biomes[curBiome].generateCave) {
                     if (biomes[curBiome].caveNoiseTexture.GetPixel(x, y).r > 0.5f) {
                         PlaceTile(tileSprite, x, y);
                     }
-                } else {
+                }
+                else {
                     PlaceTile(tileSprite, x, y);
                 }
 
-                if (y >= height - 1 && curBiome != 2 && curBiome != 3) {
+                if (y >= height - 1) {
                     int t = Random.Range(0, biomes[curBiome].treeChance);
                     if (t == 1) {
-                        if(worldTiles.Contains(new Vector2(x, y))) 
+                        if (worldTiles.Contains(new Vector2(x, y)))
                             GenerateTree(x, y + 1, curBiome);
-                    } else {
-                        if(Random.Range(0, biomes[curBiome].tallGrassChance) > 7)
+                    }
+                    else {
+                        if (Random.Range(0, biomes[curBiome].tallGrassChance) > 7)
                             if (worldTiles.Contains(new Vector2(x, y)))
-                                PlaceTile(tileAtlas.tallGrass.tileSprites, x, y + 1);
+                                PlaceTile(biomes[curBiome].tileAtlas.tallGrass.tileSprites, x, y + 1);
                     }
                 }
             }
         }
-    }
-
-    public void GenerateNoiseTexture(float frequency, float limit, Texture2D noiseTexture) {
-        for (int x = 0; x < noiseTexture.width; x++) {
-            for (int y = 0; y < noiseTexture.height; y++) {
-                float v = Mathf.PerlinNoise((x + seed) * frequency, (y + seed) * frequency);
-                if (v > limit)
-                    noiseTexture.SetPixel(x, y, Color.white);
-                else
-                    noiseTexture.SetPixel(x, y, Color.black);
-            }
-        }
-
-        noiseTexture.Apply();
     }
 
     public void GenerateTree(int x, int y, int curBiome) {
         int treeH = Random.Range(biomes[curBiome].minTreeHeight, biomes[curBiome].maxTreeHeight);
         for (int h = 0; h < treeH; h++) {
-            if(h == 0) {
-                PlaceTile(tileAtlas.logBase.tileSprites, x, y + h);
-            } else {
-                PlaceTile(tileAtlas.log.tileSprites, x, y + h);
+            if (h == 0) {
+                if (curBiome == 3)
+                    PlaceTile(biomes[curBiome].tileAtlas.logBase.tileSprites, x, y + h);
+                else
+                    PlaceTile(tileAtlas.logBase.tileSprites, x, y + h);
             }
-        }
+            else {
+                if (curBiome == 3)
+                    PlaceTile(biomes[curBiome].tileAtlas.logBase.tileSprites, x, y + h);
+                else
+                    PlaceTile(tileAtlas.logBase.tileSprites, x, y + h);
+            }
 
-        for (int j = 0; j < 3; j++) {
-            if(j < 2) {
-                PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
-                PlaceTile(tileAtlas.leaf.tileSprites, x + 1, y + treeH + j);
-                PlaceTile(tileAtlas.leaf.tileSprites, x - 1, y + treeH + j);
-            } else {
-                PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
+            if (curBiome != 2 && curBiome != 3) {
+                for (int j = 0; j < 3; j++) {
+                    if (j < 2) {
+                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x + 1, y + treeH + j);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x - 1, y + treeH + j);
+                    }
+                    else {
+                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
+                    }
+                }
             }
         }
     }
@@ -263,8 +308,11 @@ public class TerrainGeneration : MonoBehaviour
 
         GameObject newTile = new GameObject();
 
-        float chunkCoord = Mathf.Round(x / chunkSize);
-        newTile.transform.parent = worldChunks[(int)chunkCoord].transform;
+        int chunkCoord = Mathf.RoundToInt(Mathf.Round(x / chunkSize));
+        if(chunkCoord < worldSize/chunkSize)
+            newTile.transform.parent = worldChunks[chunkCoord].transform;
+        else
+            newTile.transform.parent = worldChunks[chunkCoord - 1].transform;
 
         newTile.AddComponent<SpriteRenderer>();
 

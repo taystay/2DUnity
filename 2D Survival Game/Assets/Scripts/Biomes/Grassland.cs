@@ -19,5 +19,7 @@ public class Grassland : BiomeClass
         tallGrassChance = 3;
 
         ores = new OreClass[4];
+        oresRarity[1] = 0.15f;
+        oresSize[1] = 0.8f;
     }
 }

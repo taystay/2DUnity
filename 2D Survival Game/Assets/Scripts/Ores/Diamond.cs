@@ -9,4 +9,11 @@ public class Diamond : OreClass {
         size = 0.95f;
         maxSpawnHeight = 25;
     }
+
+    public Diamond(float bRarity, float bSize) {
+        name = "diamond";
+        rarity = bRarity;
+        size = bSize;
+        maxSpawnHeight = 25;
+    }
 }
