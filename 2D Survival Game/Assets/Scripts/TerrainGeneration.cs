@@ -11,6 +11,9 @@ public class TerrainGeneration : MonoBehaviour
         DIAMOND = 3
     };
 
+    public PlayerController player;
+    public CamController cam;
+
     [Header("Tile Atlas")]
     public TileAtlas tileAtlas;
     public float seed;
@@ -30,7 +33,10 @@ public class TerrainGeneration : MonoBehaviour
     public int heightAddition = 25;
 
     private GameObject[] worldChunks;
+
     private List<Vector2> worldTiles = new List<Vector2>();
+    private List<GameObject> worldTileObjects = new List<GameObject>();
+
     public int[,] biomeList;
 
     private void OnValidate() {
@@ -45,6 +51,23 @@ public class TerrainGeneration : MonoBehaviour
         GetTileBiome();
         CreateChunks();
         GenerateTerrain();
+
+        cam.worldSize = worldSize;
+        cam.Spawn(new Vector3(player.spawnPos.x, player.spawnPos.y, cam.transform.position.z));
+        player.Spawn();
+    }
+
+    private void Update() {
+        RefreshChunks();
+    }
+
+    public void RefreshChunks() {
+        for (int i = 0; i < worldChunks.Length; i++) {
+            if (Mathf.Abs(((i * chunkSize) + (chunkSize / 2)) - player.transform.position.x) > Camera.main.orthographicSize * 4f)
+                worldChunks[i].SetActive(false);
+            else
+                worldChunks[i].SetActive(true);
+        }
     }
 
     public void GetBiomes() {
@@ -211,6 +234,10 @@ public class TerrainGeneration : MonoBehaviour
         for (int x = 0; x < worldSize; x++) {
             curBiome = biomeList[x, 0];
             height = Mathf.PerlinNoise((x + seed) * biomes[curBiome].terrFreq, seed * biomes[curBiome].terrFreq) * biomes[curBiome].heightMultiplier + heightAddition;
+
+            if (x == worldSize / 2)
+                player.spawnPos = new Vector2(x, height + 2);
+
             for (int y = 0; y < height; y++) {
                 curBiome = biomeList[x, y];
                 if (y < height - biomes[curBiome].dirtLayerHeight) {
@@ -248,11 +275,11 @@ public class TerrainGeneration : MonoBehaviour
 
                 if (biomes[curBiome].generateCave) {
                     if (biomes[curBiome].caveNoiseTexture.GetPixel(x, y).r > 0.5f) {
-                        PlaceTile(tileSprite, x, y);
+                        PlaceTile(tileSprite, x, y, true);
                     }
                 }
                 else {
-                    PlaceTile(tileSprite, x, y);
+                    PlaceTile(tileSprite, x, y, true);
                 }
 
                 if (y >= height - 1) {
@@ -264,7 +291,7 @@ public class TerrainGeneration : MonoBehaviour
                     else {
                         if (Random.Range(0, biomes[curBiome].tallGrassChance) > 7)
                             if (worldTiles.Contains(new Vector2(x, y)))
-                                PlaceTile(biomes[curBiome].tileAtlas.tallGrass.tileSprites, x, y + 1);
+                                PlaceTile(biomes[curBiome].tileAtlas.tallGrass.tileSprites, x, y + 1, biomes[curBiome].tileAtlas.tallGrass.isCollidable);
                     }
                 }
             }
@@ -276,52 +303,63 @@ public class TerrainGeneration : MonoBehaviour
         for (int h = 0; h < treeH; h++) {
             if (h == 0) {
                 if (curBiome == 3)
-                    PlaceTile(biomes[curBiome].tileAtlas.logBase.tileSprites, x, y + h);
+                    PlaceTile(biomes[curBiome].tileAtlas.logBase.tileSprites, x, y + h, biomes[curBiome].tileAtlas.logBase.isCollidable);
                 else
-                    PlaceTile(tileAtlas.logBase.tileSprites, x, y + h);
+                    PlaceTile(tileAtlas.logBase.tileSprites, x, y + h, tileAtlas.logBase.isCollidable);
             }
             else {
                 if (curBiome == 3)
-                    PlaceTile(biomes[curBiome].tileAtlas.logBase.tileSprites, x, y + h);
+                    PlaceTile(biomes[curBiome].tileAtlas.log.tileSprites, x, y + h, biomes[curBiome].tileAtlas.log.isCollidable);
                 else
-                    PlaceTile(tileAtlas.logBase.tileSprites, x, y + h);
+                    PlaceTile(tileAtlas.log.tileSprites, x, y + h, tileAtlas.log.isCollidable);
             }
 
             if (curBiome != 2 && curBiome != 3) {
                 for (int j = 0; j < 3; j++) {
                     if (j < 2) {
-                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
-                        PlaceTile(tileAtlas.leaf.tileSprites, x + 1, y + treeH + j);
-                        PlaceTile(tileAtlas.leaf.tileSprites, x - 1, y + treeH + j);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j, tileAtlas.leaf.isCollidable);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x + 1, y + treeH + j, tileAtlas.leaf.isCollidable);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x - 1, y + treeH + j, tileAtlas.leaf.isCollidable);
                     }
                     else {
-                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j);
+                        PlaceTile(tileAtlas.leaf.tileSprites, x, y + treeH + j, tileAtlas.leaf.isCollidable);
                     }
                 }
             }
         }
     }
 
-    public void PlaceTile(Sprite[] tileSprite, int x, int y) {
-        if (worldTiles.Contains(new Vector2Int(x, y)))
+    public void PlaceTile(Sprite[] tileSprite, int x, int y, bool isCollidable) {
+        if (worldTiles.Contains(new Vector2Int(x, y)) || x > worldSize || x < 0 || y < 0 || y > worldSize)
             return;
 
         GameObject newTile = new GameObject();
 
         int chunkCoord = Mathf.RoundToInt(Mathf.Round(x / chunkSize));
-        if(chunkCoord < worldSize/chunkSize)
-            newTile.transform.parent = worldChunks[chunkCoord].transform;
-        else
-            newTile.transform.parent = worldChunks[chunkCoord - 1].transform;
+        newTile.transform.parent = worldChunks[chunkCoord].transform;
 
         newTile.AddComponent<SpriteRenderer>();
+        if (isCollidable) {
+            newTile.AddComponent<BoxCollider2D>();
+            newTile.GetComponent<BoxCollider2D>().size = Vector2.one;
+            newTile.tag = "Ground";
+        }
 
         int spriteIndex = Random.Range(0, tileSprite.Length);
         newTile.GetComponent<SpriteRenderer>().sprite = tileSprite[spriteIndex];
+        newTile.GetComponent<SpriteRenderer>().sortingOrder = -5;
 
         newTile.name = tileSprite[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
 
         worldTiles.Add(newTile.transform.position - (Vector3.one * 0.5f));
+        worldTileObjects.Add(newTile);
+    }
+
+    public void RemoveTile(int x, int y) {
+        if (!worldTiles.Contains(new Vector2Int(x, y)))
+            return;
+
+        Destroy(worldTileObjects[worldTiles.IndexOf(new Vector2(x, y))]);
     }
 }

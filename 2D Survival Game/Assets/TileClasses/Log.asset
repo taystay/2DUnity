@@ -15,3 +15,4 @@ MonoBehaviour:
   tileName: log
   tileSprites:
   - {fileID: 21300000, guid: 0f87455538d540d45907bfac4852c3b3, type: 3}
+  isCollidable: 0

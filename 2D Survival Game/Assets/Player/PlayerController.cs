@@ -10,9 +10,17 @@ public class PlayerController : MonoBehaviour
     
     private Rigidbody2D rb;
     private Animator anim;
-    private float horizontal;
 
-    private void Start() {
+    private float horizontal;
+    public bool hit;
+
+    [HideInInspector]
+    public Vector2 spawnPos;
+    public TerrainGeneration terrGen;
+    public Vector2Int mousePos;
+
+    public void Spawn() {
+        GetComponent<Transform>().position = spawnPos;
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
     }
@@ -34,6 +42,11 @@ public class PlayerController : MonoBehaviour
 
         Vector2 movement = new(horizontal * moveSpeed, rb.velocity.y);
 
+        hit = Input.GetMouseButton(0);
+        if(hit) {
+            terrGen.RemoveTile(mousePos.x, mousePos.y);
+        }
+
         if (horizontal > 0)
             transform.localScale = new Vector3(-1, 1, 1);
         else if (horizontal < 0)
@@ -48,6 +61,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update() {
+        mousePos.x = Mathf.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).x - 0.5f);
+        mousePos.y = Mathf.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).y - 0.5f);
+
         anim.SetFloat("Horizontal", horizontal);
+        anim.SetBool("Hit", hit);
     }
 }

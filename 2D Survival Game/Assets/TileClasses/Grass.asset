@@ -15,3 +15,4 @@ MonoBehaviour:
   tileName: grass
   tileSprites:
   - {fileID: 21300000, guid: 7f50a1c5b1e2e634bbcadbf33075a907, type: 3}
+  isCollidable: 0

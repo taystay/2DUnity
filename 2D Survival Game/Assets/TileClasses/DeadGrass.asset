@@ -16,3 +16,4 @@ MonoBehaviour:
   tileSprites:
   - {fileID: 21300000, guid: 983229b23dfb2b94d96ba28be38ab1a4, type: 3}
   - {fileID: 21300000, guid: 13a9441d2c5b13c40932530cebffa9a9, type: 3}
+  isCollidable: 0
