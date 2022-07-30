@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: DeadGrass
+  m_Name: Sand
   m_EditorClassIdentifier: 
-  tileName: deadGrass
+  tileName: sand
+  wallVariant: {fileID: 11400000, guid: ab0e2e10257912740825f1b8a13ee327, type: 2}
   tileSprites:
-  - {fileID: 21300000, guid: 983229b23dfb2b94d96ba28be38ab1a4, type: 3}
-  - {fileID: 21300000, guid: 13a9441d2c5b13c40932530cebffa9a9, type: 3}
-  isCollidable: 0
+  - {fileID: 21300000, guid: 34f849c810f1db34680afa786bb18833, type: 3}
+  isCollidable: 1
+  dropTile: 1
+  isNatural: 1

@@ -6,17 +6,21 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed;
     public float jumpForce;
-    public bool grounded;
-    
+    public int interactRange;
+    public TileClass currTile;
+
     private Rigidbody2D rb;
     private Animator anim;
 
+    private bool grounded;
     private float horizontal;
-    public bool hit;
+    private bool hit;
+    private bool place;
 
     [HideInInspector]
     public Vector2 spawnPos;
     public TerrainGeneration terrGen;
+
     public Vector2Int mousePos;
 
     public void Spawn() {
@@ -37,15 +41,10 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         horizontal = Input.GetAxis("Horizontal");
-        float jump = Input.GetAxisRaw("Jump");
+        float jump = Input.GetAxis("Jump");
         float vertical = Input.GetAxisRaw("Vertical");
 
         Vector2 movement = new(horizontal * moveSpeed, rb.velocity.y);
-
-        hit = Input.GetMouseButton(0);
-        if(hit) {
-            terrGen.RemoveTile(mousePos.x, mousePos.y);
-        }
 
         if (horizontal > 0)
             transform.localScale = new Vector3(-1, 1, 1);
@@ -61,10 +60,25 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Update() {
+        hit = Input.GetMouseButtonDown(0);
+        place = Input.GetMouseButton(1);
+
+        float dist = Vector2.Distance(transform.position, new Vector2(mousePos.x + 0.5f, mousePos.y + 0.5f));
+        if (dist <= interactRange) {
+            if (hit)
+                terrGen.RemoveTile(mousePos.x, mousePos.y);
+            else if (place && dist > 1.2f) {
+                bool hold = currTile.isCollidable;
+                currTile.isCollidable = true;
+                terrGen.CheckTile(currTile, mousePos.x, mousePos.y);
+                currTile.isCollidable = hold;
+            }
+        }
+
         mousePos.x = Mathf.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).x - 0.5f);
         mousePos.y = Mathf.RoundToInt(Camera.main.ScreenToWorldPoint(Input.mousePosition).y - 0.5f);
 
         anim.SetFloat("Horizontal", horizontal);
-        anim.SetBool("Hit", hit);
+        anim.SetBool("Hit", hit || place);
     }
 }

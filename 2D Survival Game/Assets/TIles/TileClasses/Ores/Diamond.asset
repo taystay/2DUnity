@@ -10,8 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: Dirt
+  m_Name: Diamond
   m_EditorClassIdentifier: 
-  tileName: dirt
+  tileName: diamond
+  wallVariant: {fileID: 11400000, guid: d82792b1208386d4997267762986ab8d, type: 2}
   tileSprites:
-  - {fileID: 21300000, guid: 3594f7ad633d3b1408c5accc94b78496, type: 3}
+  - {fileID: 21300000, guid: ce4a5e4abf8273543bd870c46d49b05a, type: 3}
+  - {fileID: 21300000, guid: fa2212f957f8dff4bbb2ac5b96a00db0, type: 3}
+  isCollidable: 1
+  dropTile: 1
+  isNatural: 1

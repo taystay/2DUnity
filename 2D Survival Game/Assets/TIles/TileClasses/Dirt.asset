@@ -10,8 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: Snow
+  m_Name: Dirt
   m_EditorClassIdentifier: 
-  tileName: Snow
+  tileName: dirt
+  wallVariant: {fileID: 11400000, guid: 77dfd1fbfdbbfeb48ab86d2ffd4697da, type: 2}
   tileSprites:
-  - {fileID: 21300000, guid: 536c98b1eedc3cd41b5ab22ce9d9fb80, type: 3}
+  - {fileID: 21300000, guid: 3594f7ad633d3b1408c5accc94b78496, type: 3}
+  isCollidable: 1
+  dropTile: 1

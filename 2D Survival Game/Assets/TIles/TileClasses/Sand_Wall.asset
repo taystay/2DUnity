@@ -10,9 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: Leaf
+  m_Name: Sand_Wall
   m_EditorClassIdentifier: 
-  tileName: leaf
+  tileName: sand
+  wallVariant: {fileID: 0}
   tileSprites:
-  - {fileID: 21300000, guid: af9d416e8ae240443ab00a00b9809191, type: 3}
+  - {fileID: 21300000, guid: 34f849c810f1db34680afa786bb18833, type: 3}
   isCollidable: 0
+  dropTile: 0
+  isNatural: 1

@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ffdd02094cf4644b8ef39e6ad94c41c, type: 3}
   m_Name: TileAtlas
   m_EditorClassIdentifier: 
-  dirt: {fileID: 11400000, guid: 452859e76ed009541828fa3c911d8d57, type: 2}
-  grass: {fileID: 11400000, guid: e881dfdb0dfd1744f809acaab77166f2, type: 2}
   tallGrass: {fileID: 11400000, guid: f8ac2542319d4c94aaf9b6581fddc9d3, type: 2}
-  stone: {fileID: 11400000, guid: f97234632706dc9429c98446ca1eaf93, type: 2}
   log: {fileID: 11400000, guid: 8590aa235228cb04da27c42cc89497a5, type: 2}
   logBase: {fileID: 11400000, guid: f4b610158047b2f4aafa9966b363a930, type: 2}
   leaf: {fileID: 11400000, guid: 65d0b8146fed1174a954c5b5cd570e3b, type: 2}
+  stone: {fileID: 11400000, guid: f97234632706dc9429c98446ca1eaf93, type: 2}
   snow: {fileID: 11400000, guid: c67c269be09219b46b2bed9fe2ed1b65, type: 2}
   sand: {fileID: 11400000, guid: 064ab8f88f1a6c749af19ad1d156c3a7, type: 2}
+  dirt: {fileID: 11400000, guid: 452859e76ed009541828fa3c911d8d57, type: 2}
+  grass: {fileID: 11400000, guid: e881dfdb0dfd1744f809acaab77166f2, type: 2}
   coal: {fileID: 11400000, guid: ce2a98970df6170408f7c2b8614ef27f, type: 2}
   iron: {fileID: 11400000, guid: c6e4a840df4ea67428a154af621b37bc, type: 2}
   gold: {fileID: 11400000, guid: a73756925f3034d4285c4652abca09c9, type: 2}

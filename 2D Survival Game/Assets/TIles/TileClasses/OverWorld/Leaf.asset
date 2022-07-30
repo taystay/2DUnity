@@ -10,12 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: TallGrass
+  m_Name: Leaf
   m_EditorClassIdentifier: 
-  tileName: tallGrass
+  tileName: leaf
   tileSprites:
-  - {fileID: 21300000, guid: afde48d9c519c7643951b85fc99aa04e, type: 3}
-  - {fileID: 21300000, guid: ae312920ee67f744db3a272e21ccc984, type: 3}
-  - {fileID: 21300000, guid: eba24922055b7bd479dc42fd04e49b69, type: 3}
-  - {fileID: 21300000, guid: 0972eb1bdb27353418488fcb0d2d701e, type: 3}
+  - {fileID: 21300000, guid: af9d416e8ae240443ab00a00b9809191, type: 3}
   isCollidable: 0
+  dropTile: 0

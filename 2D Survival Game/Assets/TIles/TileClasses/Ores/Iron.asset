@@ -10,9 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 823c7c6b11dc41941b4cb374c88ee70a, type: 3}
-  m_Name: Stone
+  m_Name: Iron
   m_EditorClassIdentifier: 
-  tileName: stone
+  tileName: iron
+  wallVariant: {fileID: 11400000, guid: d82792b1208386d4997267762986ab8d, type: 2}
   tileSprites:
-  - {fileID: 21300000, guid: 59db7eeba39102c4183e8157f7871a0a, type: 3}
-  - {fileID: 21300000, guid: bffa431ec1b4dd9409badd6422fecdc4, type: 3}
+  - {fileID: 21300000, guid: c8b7f8cb1e8870a45b4ba21250c6386d, type: 3}
+  - {fileID: 21300000, guid: 760956ba902313e42960e6313e8e9d5e, type: 3}
+  isCollidable: 1
+  dropTile: 1
+  isNatural: 1

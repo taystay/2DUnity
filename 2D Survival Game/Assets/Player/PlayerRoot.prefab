@@ -265,8 +265,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   jumpForce: 12
-  grounded: 0
-  hit: 0
+  interactRange: 3
+  currTile: {fileID: 11400000, guid: af5b5a3da8b520f4d962ebcc678ccbce, type: 2}
   spawnPos: {x: 0, y: 0}
   terrGen: {fileID: 0}
   mousePos: {x: 0, y: 0}
