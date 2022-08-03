@@ -11,6 +11,13 @@ public class TerrainGeneration : MonoBehaviour
         DIAMOND = 3
     };
 
+    [Header("Lighting")]
+    public Texture2D worldTilesMap;
+    public Material lightShader;
+    public float lightThreshold;
+    public float lightRadius = 7f;
+    List<Vector2Int> unlitBlocks = new List<Vector2Int>();
+
     public PlayerController player;
     public CamController cam;
     public GameObject tileDrop;
@@ -47,12 +54,33 @@ public class TerrainGeneration : MonoBehaviour
     }
 
     private void Start() {
+        //Initialize light
+        worldTilesMap = new Texture2D(worldSize, worldSize);
+        worldTilesMap.filterMode = FilterMode.Point;
+        lightShader.SetTexture("_ShadowTex", worldTilesMap);
+
+        for (int x = 0; x < worldSize; x++) {
+            for (int y = 0; y < worldSize; y++) {
+                worldTilesMap.SetPixel(x, y, Color.white);
+            }
+        }
+        worldTilesMap.Apply();
+
+        //Generate terrain
         GetBiomes();
         SetGradient();
         DrawTextures();
         GetTileBiome();
         CreateChunks();
         GenerateTerrain();
+
+        for (int x = 0; x < worldSize; x++) {
+            for (int y = 0; y < worldSize; y++) {
+                if (worldTilesMap.GetPixel(x, y) == Color.white)
+                    LightBlock(x, y, 1f, 0);
+            }
+        }
+        worldTilesMap.Apply();
 
         cam.worldSize = worldSize;
         cam.Spawn(new Vector3(player.spawnPos.x, player.spawnPos.y, cam.transform.position.z));
@@ -294,6 +322,8 @@ public class TerrainGeneration : MonoBehaviour
                 }
             }
         }
+
+        worldTilesMap.Apply();
     }
 
     public void GenerateTree(int x, int y, int curBiome) {
@@ -329,13 +359,15 @@ public class TerrainGeneration : MonoBehaviour
     public void CheckTile(TileClass tile, int x, int y) {
         Vector2 blockPos = new Vector2Int(x, y);
         if (!worldTiles.Contains(blockPos)) {
+            RemoveLightSource(x, y);
             //place tile if the tile doesn't exist
             PlaceTile(tile, x, y, false);
         }
         else {
             if (!worldTileClasses[worldTiles.IndexOf(blockPos)].isCollidable) {
                 //overwrite non-collidable tile
-                RemoveTile(x, y);
+                RemoveLightSource(x, y);
+                //RemoveTile(x, y);
                 PlaceTile(tile, x, y, false);
             }
         }
@@ -366,8 +398,11 @@ public class TerrainGeneration : MonoBehaviour
         else
             newTileSR.sortingOrder = -10;
 
-        if (tile.name.ToUpper().Contains("WALL"))
+        if (tile.name.ToUpper().Contains("WALL")) {
             newTileSR.color = new Color(0.6f, 0.6f, 0.6f);
+            worldTilesMap.SetPixel(x, y, Color.black);
+        } else if (tile.isCollidable)
+            //worldTilesMap.SetPixel(x, y, Color.black);
 
         newTile.name = tile.tileSprites[0].name;
         newTile.transform.position = new Vector2(x + 0.5f, y + 0.5f);
@@ -389,6 +424,9 @@ public class TerrainGeneration : MonoBehaviour
         }
 
         Destroy(worldTileObjects[tilePos]);
+        worldTilesMap.SetPixel(x, y, Color.white);
+        LightBlock(x, y, 1f, 0);
+
         if(worldTileClasses[tilePos].dropTile) {
             GameObject droppedTile = Instantiate(tileDrop, new Vector2(x, y + 0.2f), Quaternion.identity);
             droppedTile.GetComponent<SpriteRenderer>().sprite = worldTileClasses[tilePos].tileSprites[0];
@@ -397,5 +435,75 @@ public class TerrainGeneration : MonoBehaviour
         worldTileObjects.RemoveAt(tilePos);
         worldTileClasses.RemoveAt(tilePos);
         worldTiles.RemoveAt(tilePos);
+
+        worldTilesMap.Apply();
+    }
+
+    void LightBlock(int x, int y, float intensity, int iteration) {
+        if (iteration < lightRadius) {
+            worldTilesMap.SetPixel(x, y, Color.white * intensity);
+            
+            for (int nx = x - 1; nx < x + 2; x++) {
+                for (int ny = y - 1; ny < y + 2; y++) {
+                    if (nx != x || ny != y) {
+                        float dist = Vector2.Distance(new Vector2(x, y), new Vector2(nx, ny));
+                        float targetIntensity = Mathf.Pow(0.7f, dist) * intensity;
+                        if (worldTilesMap.GetPixel(nx, ny) != null) {
+                            if(worldTilesMap.GetPixel(nx, ny).r < targetIntensity) {
+                                LightBlock(nx, ny, targetIntensity, iteration + 1);
+                            }
+                        }
+                    }
+                }
+            }
+
+            worldTilesMap.Apply();
+        }
+    }
+
+    void RemoveLightSource(int x, int y) {
+        unlitBlocks.Clear();
+        UnLightBlock(x, y, x, y);
+
+        List<Vector2Int> toRelight = new List<Vector2Int>();
+        foreach (Vector2Int block in unlitBlocks) {
+            for (int nx = block.x - 1; nx < block.x + 2; nx++) {
+                for (int ny = block.y - 1; ny < block.y + 2; ny++) {
+                    if (worldTilesMap.GetPixel(nx, ny) != null) {
+                        if (worldTilesMap.GetPixel(nx, ny).r > worldTilesMap.GetPixel(block.x, block.y).r) {
+                            if (!toRelight.Contains(new Vector2Int(nx, ny))) {
+                                toRelight.Add(new Vector2Int(nx, ny));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (Vector2Int source in toRelight) {
+            LightBlock(source.x, source.y, worldTilesMap.GetPixel(source.x, source.y).r, 0);
+        }
+
+        worldTilesMap.Apply();
+    }
+
+    void UnLightBlock(int x, int y, int ix, int iy) {
+        if (Mathf.Abs(x - ix) >= lightRadius || Mathf.Abs(y - iy) >= lightRadius || unlitBlocks.Contains(new Vector2Int(x, y)))
+            return;
+
+        for (int nx = x - 1; nx < x + 2; nx++) {
+            for (int ny = y - 1; ny < y + 2; ny++) {
+                if (nx != x || ny != y) {
+                    if (worldTilesMap.GetPixel(nx, ny) != null) {
+                        if (worldTilesMap.GetPixel(nx, ny).r < worldTilesMap.GetPixel(x, y).r) {
+                            UnLightBlock(nx, ny, ix, iy);
+                        }
+                    }
+                }
+            }
+        }
+
+        worldTilesMap.SetPixel(x, y, Color.black);
+        unlitBlocks.Add(new Vector2Int(x, y));
     }
 }
